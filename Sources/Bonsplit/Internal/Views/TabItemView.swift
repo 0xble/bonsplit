@@ -64,6 +64,33 @@ struct TabItemView: View {
     @AppStorage(TabControlShortcutHintDebugSettings.yKey) private var controlShortcutHintYOffset = TabControlShortcutHintDebugSettings.defaultY
     @AppStorage(TabControlShortcutHintDebugSettings.alwaysShowKey) private var alwaysShowShortcutHints = TabControlShortcutHintDebugSettings.defaultAlwaysShow
 
+    private var selectedTabYOffset: CGFloat {
+        guard isSelected else { return 0 }
+        switch appearance.tabBarPosition {
+        case .top:
+            return 0.5
+        case .bottom:
+            return -0.5
+        }
+    }
+
+    private var selectedTabTopPadding: CGFloat {
+        isSelected && appearance.tabBarPosition == .bottom ? 1 : 0
+    }
+
+    private var selectedTabBottomPadding: CGFloat {
+        isSelected && appearance.tabBarPosition == .top ? 1 : 0
+    }
+
+    private var activeIndicatorAlignment: Alignment {
+        switch appearance.tabBarPosition {
+        case .top:
+            return .top
+        case .bottom:
+            return .bottom
+        }
+    }
+
     var body: some View {
         HStack(spacing: 0) {
             // Icon + title block uses the standard spacing, but keep the close affordance tight.
@@ -164,14 +191,15 @@ struct TabItemView: View {
             trailingAccessory
         }
         .padding(.horizontal, TabBarMetrics.tabHorizontalPadding)
-        .offset(y: isSelected ? 0.5 : 0)
+        .offset(y: selectedTabYOffset)
         .frame(
             minWidth: TabBarMetrics.tabMinWidth,
             maxWidth: TabBarMetrics.tabMaxWidth,
             minHeight: TabBarMetrics.tabHeight,
             maxHeight: TabBarMetrics.tabHeight
         )
-        .padding(.bottom, isSelected ? 1 : 0)
+        .padding(.top, selectedTabTopPadding)
+        .padding(.bottom, selectedTabBottomPadding)
         .background(tabBackground.saturation(saturation))
         .animation(.easeInOut(duration: 0.14), value: showsShortcutHint)
         .contentShape(Rectangle())
@@ -425,7 +453,7 @@ struct TabItemView: View {
 
     @ViewBuilder
     private var tabBackground: some View {
-        ZStack(alignment: .top) {
+        ZStack(alignment: activeIndicatorAlignment) {
             // Background fill (hover)
             if TabItemStyling.shouldShowHoverBackground(isHovered: isHovered, isSelected: isSelected) {
                 Rectangle()

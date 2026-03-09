@@ -124,6 +124,11 @@ extension BonsplitConfiguration {
     }
 
     public struct Appearance: Sendable {
+        public enum TabBarPosition: Sendable {
+            case top
+            case bottom
+        }
+
         public struct ChromeColors: Sendable {
             /// Optional hex color (`#RRGGBB` or `#RRGGBBAA`) for tab/pane chrome backgrounds.
             /// When unset, Bonsplit uses native system colors.
@@ -143,6 +148,9 @@ extension BonsplitConfiguration {
         }
 
         // MARK: - Tab Bar
+
+        /// Position of the tab bar within each pane
+        public var tabBarPosition: TabBarPosition
 
         /// Height of the tab bar
         public var tabBarHeight: CGFloat
@@ -205,6 +213,7 @@ extension BonsplitConfiguration {
         // MARK: - Initializer
 
         public init(
+            tabBarPosition: TabBarPosition = .top,
             tabBarHeight: CGFloat = 33,
             tabMinWidth: CGFloat = 140,
             tabMaxWidth: CGFloat = 220,
@@ -217,6 +226,7 @@ extension BonsplitConfiguration {
             enableAnimations: Bool = true,
             chromeColors: ChromeColors = .init()
         ) {
+            self.tabBarPosition = tabBarPosition
             self.tabBarHeight = tabBarHeight
             self.tabMinWidth = tabMinWidth
             self.tabMaxWidth = tabMaxWidth

@@ -98,6 +98,15 @@ struct TabBarView: View {
         isFocused && controlKeyMonitor.isShortcutHintVisible
     }
 
+    private var separatorAlignment: Alignment {
+        switch appearance.tabBarPosition {
+        case .top:
+            return .bottom
+        case .bottom:
+            return .top
+        }
+    }
+
     var body: some View {
         HStack(spacing: 0) {
             // Scrollable tabs with fade overlays
@@ -538,7 +547,7 @@ struct TabBarView: View {
 
         Rectangle()
             .fill(barFill)
-            .overlay(alignment: .bottom) {
+            .overlay(alignment: separatorAlignment) {
                 GeometryReader { geometry in
                     let separator = TabBarColors.separator(for: appearance)
                     let gapRange: ClosedRange<CGFloat>? = selectedTabFrameInBar.map { frame in

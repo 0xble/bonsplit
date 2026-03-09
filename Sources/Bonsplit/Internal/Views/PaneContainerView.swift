@@ -171,17 +171,29 @@ struct PaneContainerView<Content: View, EmptyContent: View>: View {
         controller.draggingTab != nil || controller.activeDragTab != nil
     }
 
-    var body: some View {
-        VStack(spacing: 0) {
-            // Tab bar
+    @ViewBuilder
+    private var paneChrome: some View {
+        switch appearance.tabBarPosition {
+        case .top:
             TabBarView(
                 pane: pane,
                 isFocused: isFocused,
                 showSplitButtons: showSplitButtons
             )
-
-            // Content area with drop zones
             contentAreaWithDropZones
+        case .bottom:
+            contentAreaWithDropZones
+            TabBarView(
+                pane: pane,
+                isFocused: isFocused,
+                showSplitButtons: showSplitButtons
+            )
+        }
+    }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            paneChrome
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(TabBarColors.paneBackground(for: appearance))
