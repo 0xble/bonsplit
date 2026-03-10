@@ -51,6 +51,11 @@ public final class BonsplitController {
     /// Return `true` when the drop has been handled by the host application.
     @ObservationIgnored public var onExternalTabDrop: ((ExternalTabDropRequest) -> Bool)?
 
+    /// Called whenever the zoomed pane changes, regardless of the trigger path.
+    @ObservationIgnored public var onZoomStateChange: ((_ zoomedPaneId: PaneID?) -> Void)? {
+        didSet { internalController.onZoomStateChange = onZoomStateChange }
+    }
+
     // MARK: - Internal State
 
     internal var internalController: SplitViewController
@@ -61,6 +66,7 @@ public final class BonsplitController {
     public init(configuration: BonsplitConfiguration = .default) {
         self.configuration = configuration
         self.internalController = SplitViewController()
+        self.internalController.onZoomStateChange = onZoomStateChange
     }
 
     // MARK: - Tab Operations

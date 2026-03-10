@@ -9,7 +9,12 @@ final class SplitViewController {
     var rootNode: SplitNode
 
     /// Currently zoomed pane. When set, rendering should only show this pane.
-    var zoomedPaneId: PaneID?
+    var zoomedPaneId: PaneID? {
+        didSet {
+            guard oldValue != zoomedPaneId else { return }
+            onZoomStateChange?(zoomedPaneId)
+        }
+    }
 
     /// Currently focused pane ID
     var focusedPaneId: PaneID?
@@ -56,6 +61,9 @@ final class SplitViewController {
 
     /// Callback for geometry changes
     var onGeometryChange: (() -> Void)?
+
+    /// Callback for zoom state changes so hosts can reconcile dependent UI state.
+    @ObservationIgnored var onZoomStateChange: ((_ zoomedPaneId: PaneID?) -> Void)?
 
     init(rootNode: SplitNode? = nil) {
         if let rootNode {
